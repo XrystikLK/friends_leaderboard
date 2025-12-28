@@ -1,47 +1,55 @@
 {% extends 'base.html' %}
 
 {% block body %}
-  <p class="mx-auto text-xl">{{ content }}</p>
-  <a href="#" class="hover-3d my-12 mx-2 cursor-pointer">
-
-  <!-- content -->
-  <div class="card w-96 bg-black  bg-[radial-gradient(circle_at_bottom_left,#ffffff04_35%,transparent_36%),radial-gradient(circle_at_top_right,#ffffff04_35%,transparent_36%)] bg-size-[4.95em_4.95em]">
-    <div class="card-body">
-      <div class="flex justify-between mb-10">
-        <div class="font-bold">BANK OF LATVERIA</div>
-        <div class="text-5xl opacity-10">❁</div>
+  <div class="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white p-6">
+    <div class="max-w-2xl w-full text-center space-y-8">
+      <div class="flex justify-center">
+        <div class="p-4 bg-blue-600 rounded-3xl shadow-2xl shadow-blue-500/20">
+          {% lucide "trophy" size=64 %}
+        </div>
       </div>
-      <div class="text-lg mb-4 opacity-40">0210 8820 1150 0222</div>
-      <div class="flex justify-between">
-        <div>
-          <div class="text-xs opacity-20">CARD HOLDER</div>
-          <div>VICTOR VON D.</div>
+
+      <div class="space-y-4">
+        <h1 class="text-5xl font-extrabold tracking-tight">
+          Steam <span class="text-blue-500">Friends Leaderboard</span>
+        </h1>
+        <p class="text-slate-400 text-lg">
+          Узнай, кто из твоей компании проводит больше всего времени в играх.
+        </p>
+      </div>
+
+      <div class="relative group">
+        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-300"></div>
+        <div class="relative flex items-center justify-between bg-slate-900 border border-slate-800 rounded-2xl p-2">
+          <div class="flex-1 ml-4 flex gap-x-2">
+            <div class="text-slate-500 mt-0.5">
+              {% lucide 'search' size=20 %}
+            </div>
+            <form action="/" method="post" id="steam-url-form" class="flex-1">
+              {% csrf_token %}
+              {% for field in form %}
+                <div class="fieldWrapper flex-1">
+                  {{ field }}
+                </div>
+              {% endfor %}
+            </form>
+          </div>
+          <button type="submit" form="steam-url-form" class="mr-4">
+            {% lucide "arrow-right" size=25 %}
+          </button>
         </div>
-        <div>
-          <div class="text-xs opacity-20">EXPIRES</div>
-          <div>29/08</div>
-        </div>
+      </div>
+      <div class="space-y-6">
+        {% if form.non_field_errors %}
+          <div class="bg-red-800 border border-red-900 text-red-100 px-4 py-3 rounded relative" role="alert">
+            {% for error in form.non_field_errors %}
+              <span class="block sm:inline">{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-12">
       </div>
     </div>
   </div>
-
-  <!-- 8 empty divs needed for the 3D effect -->
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-</a>
-  <form action="/" method="post">
-    {% csrf_token %}
-    {% for field in form %}
-      <div class="fieldWrapper">
-        {{ field.label_tag }}: {{ field }}
-      </div>
-    {% endfor %}
-    <input type="submit" value="Submit" class="text-lime-500">
-  </form>
 {% endblock %}

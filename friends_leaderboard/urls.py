@@ -23,6 +23,7 @@ from friends_leaderboard import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main.views.index, name='index'),
+    path('user/<str:steamid>/', main.views.user_profile, name='user_profile'),
 ]
 
 if settings.DEBUG:

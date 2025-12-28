@@ -6,7 +6,6 @@ class SteamUrlForm(forms.Form):
         label='',
         widget=forms.URLInput(attrs={
             'placeholder':'Введите ссылку на ваш Steam профиль',
-            'class': 'form-control'
+            'class': 'bg-transparent w-full text-white text-lg placeholder-slate-500 focus:outline-none focus:ring-0'
         }),
-
     )

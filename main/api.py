@@ -4,6 +4,7 @@ import requests
 import os
 from dotenv import load_dotenv
 from pprint import pprint
+from main.models import Users
 
 load_dotenv()
 
@@ -46,6 +47,6 @@ def get_user_summaries(steamid: str):
         'steamids': steamid,
     })
     return response.json()['response']
-# print(get_user_steamid('https://steamcommunity.com/id/xrystikonelove/'))
-# pprint(get_user_games('76561198825682828', True, games_id=[10]))
-pprint(get_user_summaries('76561198825682828'))
+
+def check_user_in_db(steamid: str) -> bool:
+    return Users.objects.filter(steamid=steamid).exists()
