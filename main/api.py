@@ -39,6 +39,13 @@ def get_user_games(steamid: str, include_free_games: bool = False, games_id: lis
     })
     return response.json()['response']
 
-
+def get_user_summaries(steamid: str):
+    url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/'
+    response = requests.get(url, params={
+        'key': API_KEY,
+        'steamids': steamid,
+    })
+    return response.json()['response']
 # print(get_user_steamid('https://steamcommunity.com/id/xrystikonelove/'))
-pprint(get_user_games('76561198825682828', True, games_id=[10]))
+# pprint(get_user_games('76561198825682828', True, games_id=[10]))
+pprint(get_user_summaries('76561198825682828'))
