@@ -4,7 +4,6 @@ import requests
 import os
 from dotenv import load_dotenv
 from pprint import pprint
-from main.models import Users
 
 load_dotenv()
 
@@ -40,13 +39,22 @@ def get_user_games(steamid: str, include_free_games: bool = False, games_id: lis
     })
     return response.json()['response']
 
-def get_user_summaries(steamid: str):
+def get_user_summaries(steamid: list[str]) -> list[dict[str, str]]:
+    """
+    Максимальная длина steamid не должна превышать 100
+    """
     url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/'
     response = requests.get(url, params={
         'key': API_KEY,
-        'steamids': steamid,
+        'steamids': ','.join(steamid),
     })
-    return response.json()['response']
+    return response.json()['response']['players']
 
-def check_user_in_db(steamid: str) -> bool:
-    return Users.objects.filter(steamid=steamid).exists()
+def get_user_friends(steamid: str):
+    url = 'http://api.steampowered.com/ISteamUser/GetFriendList/v0001/'
+    response = requests.get(url, params={
+        'key': API_KEY,
+        'steamid': steamid,
+    })
+    return response.json()['friendslist']['friends']
+
