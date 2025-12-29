@@ -4,6 +4,45 @@ import requests
 import os
 from dotenv import load_dotenv
 from pprint import pprint
+from typing import TypedDict, List, NotRequired
+
+
+class GameInfo(TypedDict):
+    appid: int
+    content_descriptorids: NotRequired[List[int]]
+    has_community_visible_stats: bool
+    img_icon_url: str
+    name: str
+    playtime_forever: int
+
+
+
+class UserGames(TypedDict):
+    game_count: int
+    games: List[GameInfo]
+
+class UserSummaries(TypedDict):
+    avatar: str
+    avatarfull: str
+    avatarhash: str
+    avatarmedium: str
+    commentpermission: int
+    communityvisibilitystate: int
+    loccountrycode: str
+    locstatecode: str
+    personaname: str
+    personastate: str
+    personastateflags: int
+    primaryclanid: str
+    profilestate: int
+    profileurl: str
+    steamid: int
+    timecreated: int
+
+class UserFriends(TypedDict):
+    friend_since: int
+    relationship: str
+    steamid: str
 
 load_dotenv()
 
@@ -21,9 +60,7 @@ def get_user_steamid(profile_link: str) -> str:
         })
         return response.json()['response']['steamid']
 
-
-
-def get_user_games(steamid: str, include_free_games: bool = False, games_id: list[int] | None = None):
+def get_user_games(steamid: str, include_free_games: bool = False, games_id: list[int] | None = None) -> UserGames:
     url = 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/'
     json_params  = {
         'steamid': steamid,
@@ -39,7 +76,7 @@ def get_user_games(steamid: str, include_free_games: bool = False, games_id: lis
     })
     return response.json()['response']
 
-def get_user_summaries(steamid: list[str]) -> list[dict[str, str]]:
+def get_user_summaries(steamid: list[str]) -> list[UserSummaries]:
     """
     Максимальная длина steamid не должна превышать 100
     """
@@ -50,7 +87,7 @@ def get_user_summaries(steamid: list[str]) -> list[dict[str, str]]:
     })
     return response.json()['response']['players']
 
-def get_user_friends(steamid: str):
+def get_user_friends(steamid: str) -> list[UserFriends]:
     url = 'http://api.steampowered.com/ISteamUser/GetFriendList/v0001/'
     response = requests.get(url, params={
         'key': API_KEY,
