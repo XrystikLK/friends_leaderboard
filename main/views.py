@@ -1,9 +1,14 @@
+import random
+from pprint import pprint
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+
+from api.api import get_user_games
 from . import forms
 from api import api
 from .models import Users, Friendship, Game, UserGameStats
-from .utils import record_user_summaries, record_user_friends, record_user_games_info
+from .utils import record_user_summaries, record_user_friends, record_user_games_info, get_random_game_leaderboard
 
 
 def index(request):
@@ -39,8 +44,8 @@ def index(request):
 
 def user_profile(request, steamid):
     user = get_object_or_404(Users, steamid=steamid)
-
     record_user_games_info(steamid, current_user=user)
+    request.session['steamid'] = steamid
 
     try:
         user_summary_data = api.get_user_summaries([steamid])[0]
@@ -48,12 +53,9 @@ def user_profile(request, steamid):
         print(f"Ошибка при получении пользователя из Steam API: {e}")
         user_summary_data = None
 
-    
-    friends = user.friends.all()
-
     context = {
         'user': user,
         'user_summary': user_summary_data,
-        'friends': friends,
+        # 'friends': friends,
     }
     return render(request, 'user_profile.html', context)
