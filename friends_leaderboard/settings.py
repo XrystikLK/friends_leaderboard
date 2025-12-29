@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'theme',
     'lucide',
     'main',
+    'rest_framework',
 ]
 
 TAILWIND_APP_NAME = "theme"
@@ -88,6 +89,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {
+            'timeout': 20,
+        },
     }
 }
 

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES6",           /* Версия JS, которую поймут браузеры */
+    "module": "ESNext",
+    "outDir": "main/static/js",   /* Куда складывать готовые файлы */
+    "rootDir": "main/assets/ts",  /* Где лежат ваши .ts файлы */
+    "strict": true,            /* Включаем строгую проверку типов */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["main/assets/ts/**/*"], /* За какими файлами следить */
+  "exclude": ["node_modules"]
+}
