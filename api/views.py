@@ -4,7 +4,7 @@ from django.forms import model_to_dict
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from api.api import get_user_games
+import api.api as API
 from main.models import UserGameStats, Users, Game
 
 
@@ -24,11 +24,9 @@ def get_game_leaderboard(request, appid: int):
     current_user = Users.objects.get(steamid=request.session.get('steamid'))
     friends = current_user.friends.all()
     steamid = current_user.steamid
-
     # user_games_ids = UserGameStats.objects.filter(user_id=steamid).values_list('game_id', flat=True)
     # user_random_gameid = random.choice(user_games_ids)
     # print(user_random_gameid)
-
     game_leaderboard = []
     for friend in friends:
         if (friend_db := UserGameStats.objects.filter(user_id=friend.steamid, game_id=appid)).exists():
@@ -38,7 +36,7 @@ def get_game_leaderboard(request, appid: int):
             }
             game_leaderboard.append({"user_name": friend_db[0].user.personaname, "game_data": game_data})
         else:
-            game_info = get_user_games(friend.steamid, games_id=[appid])
+            game_info = API.get_user_games(friend.steamid, games_id=[appid])
             if not game_info or game_info['game_count'] < 1:
                 print('Continue', game_info)
                 continue
@@ -53,7 +51,7 @@ def get_game_leaderboard(request, appid: int):
                                                        'playtime_forever': game_info['games'][0]['playtime_forever'],
                                                    })
             game_leaderboard.append({"user_name": friend.personaname, "game_data": {
-                'playtime_forever': game_info['games'][0]['playtime_forever'],
+                'playtime_forever': int(game_info['games'][0]['playtime_forever']/60),
             }})
 
             # if 'game_info' not in result:
@@ -86,3 +84,15 @@ def get_user_friends(request):
         friends_obj.append(model_to_dict(friend))
     print(friends_obj)
     return Response(friends_obj)
+
+@api_view(['GET'])
+def get_user_games(request):
+    user_games = UserGameStats.objects.filter(user_id=request.session.get('steamid'))
+    result = []
+    for user in user_games:
+        result.append({
+            "appid": user.game.appid,
+            "game_title": user.game.name,
+            "game_icon_hash": user.game.icon_url,
+        })
+    return Response(result)

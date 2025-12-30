@@ -8,7 +8,7 @@ from api.api import get_user_games
 from . import forms
 from api import api
 from .models import Users, Friendship, Game, UserGameStats
-from .utils import record_user_summaries, record_user_friends, record_user_games_info, get_random_game_leaderboard
+from .utils import record_user_summaries, record_user_friends, record_user_games_info
 
 
 def index(request):

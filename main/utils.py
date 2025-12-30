@@ -65,7 +65,7 @@ def record_user_games_info(steamid: str, current_user):
                 UserGameStats.objects.update_or_create(
                     user=current_user,
                     game=game,
-                    defaults={'playtime_forever': game_info.get('playtime_forever', 0)}
+                    defaults={'playtime_forever': int(game_info.get('playtime_forever', 0)/60)}
                 )
     except Exception as e:
         print(f"Ошибка при получении или сохранении игр основного пользователя : {e}")

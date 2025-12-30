@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/leaderboard/<int:appid>/', api.views.get_game_leaderboard),
 
     path('api/friends/', api.views.get_user_friends),
+    path('api/games/', api.views.get_user_games),
     path('api/test', api.views.getMoreData)
 ]
 
