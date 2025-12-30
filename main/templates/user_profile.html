@@ -14,62 +14,128 @@
       </div>
       <div class="flex flex-col grow">
         <button>Общая таблица</button>
-        <div class="collapse collapse-arrow w-[195px] max-h-1/3">
-          <input type="checkbox" name="my-accordion-2"  class="pl-0"/>
+        <div class="collapse collapse-arrow w-[195px]">
+          <input type="checkbox" name="my-accordion-2" class="pl-0"/>
           <div class="collapse-title font-semibold overflow-hidden pl-0 text-slate-400 text-[12px]"
                id="friendTitle"></div>
-          <div class="collapse-content text-sm pl-1 !max-h-[250px] overflow-scroll">
-            <div class="max-h-1/3" id="friendContent">
+          <div class="collapse-content text-sm pl-1 overflow-scroll">
+            <div class="" id="friendContent">
 
             </div>
           </div>
         </div>
-        <div class="collapse collapse-arrow w-[195px] max-h-1/3">
-          <input type="checkbox" name="my-accordion-2"  class="pl-0"/>
+        <div class="collapse collapse-arrow w-[195px]">
+          <input type="checkbox" name="my-accordion-2" class="pl-0"/>
           <div class="collapse-title font-semibold overflow-hidden pl-0 text-slate-400 text-[12px]"
-               id="gameTitle">Мои игры</div>
-          <div class="collapse-content text-sm pl-1 !max-h-1/3" id="gameContent">
+               id="gameTitle">Мои игры
+          </div>
+          <div class="collapse-content text-sm pl-1" id="gameContent">
           </div>
         </div>
       </div>
       <div class="bg-lime-500 w-full h-25">das</div>
     </div>
+    <div class="flex flex-col w-full px-8 py-4">
+      <div class="flex items-center gap-2 text-blue-500 text-sm font-medium mb-1">
+        {% lucide 'history' size=14 %}
+        <span>Аналитика аккаунта</span>
+      </div>
+      <p class="text-4xl font-black text-white tracking-tight">
+        Counter Strike 2
+      </p>
+      <button class="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-1.5 transition-colors"
+              id="addGame">
+        {% lucide 'plus' size=16 %}
+        <span>Добавить игру в список</span>
+      </button>
+
+      <div class="mb-8 p-6 bg-blue-600/5 border border-blue-500/20 rounded-2xl animate-in zoom-in duration-150 hidden"
+           id="addGameArea">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            {% lucide 'search' size=18 class="text-blue-400" %}
+            <Search size={18} class="text-blue-400"/>
+            Выберите игру из библиотеки
+          </h3>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 overflow-y-auto max-h-[250px]"
+             id="gamesList">
+          <button>
+            <p>dasdas</p>
+          </button>
+        </div>
+      </div>
+      <div class="flex gap-x-4 justify-between w-full">
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 relative overflow-hidden group shadow-lg grow">
+          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
+            {% lucide 'clock' size=80 %}
+          </div>
+          <div class="p-2 bg-blue-500/10 text-blue-500 rounded-lg w-fit mb-4">
+            {% lucide 'clock' size=20 %}
+          </div>
+          <div class="text-3xl font-black">dasadsadsa</div>
+          <div class="text-sm text-slate-500 mt-1 uppercase font-bold tracking-wider">Всего в группе</div>
+        </div>
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 relative overflow-hidden group shadow-lg grow">
+          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
+            {% lucide 'clock' size=80 %}
+          </div>
+          <div class="p-2 bg-blue-500/10 text-blue-500 rounded-lg w-fit mb-4">
+            {% lucide 'clock' size=20 %}
+            {#          <Clock size={20}/>#}
+          </div>
+          <div class="text-3xl font-black">dasadsadsa</div>
+          <div class="text-sm text-slate-500 mt-1 uppercase font-bold tracking-wider">Всего в группе</div>
+        </div>
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 relative overflow-hidden group shadow-lg grow">
+          <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
+            {% lucide 'clock' size=80 %}
+          </div>
+          <div class="p-2 bg-blue-500/10 text-blue-500 rounded-lg w-fit mb-4">
+            {% lucide 'clock' size=20 %}
+            {#          <Clock size={20}/>#}
+          </div>
+          <div class="text-3xl font-black">dasadsadsa</div>
+          <div class="text-sm text-slate-500 mt-1 uppercase font-bold tracking-wider">Всего в группе</div>
+        </div>
+      </div>
+      <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+        <table class="table">
+          <!-- head -->
+          <thead>
+          <tr>
+            <th class="text-center">Место</th>
+            <th>Игрок</th>
+            <th>Сыгранное время</th>
+          </tr>
+          </thead>
+          <tbody id="leaderboard">
+          {#        <!-- row 1 -->#}
+          {#        <tr>#}
+          {#          <th>1</th>#}
+          {#          <td>Cy Ganderton</td>#}
+          {#          <td>Quality Control Specialist</td>#}
+          {#          <td>Blue</td>#}
+          {#        </tr>#}
+          {#        <!-- row 2 -->#}
+          {#        <tr>#}
+          {#          <th>2</th>#}
+          {#          <td>Hart Hagerty</td>#}
+          {#          <td>Desktop Support Technician</td>#}
+          {#          <td>Purple</td>#}
+          {#        </tr>#}
+          {#        <!-- row 3 -->#}
+          {#        <tr>#}
+          {#          <th>3</th>#}
+          {#          <td>Brice Swyre</td>#}
+          {#          <td>Tax Accountant</td>#}
+          {#          <td>Red</td>#}
+          {#        </tr>#}
+          {#        </tbody>#}
+        </table>
+      </div>
+    </div>
   </div>
 
-  {#  <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">#}
-  {#    <table class="table">#}
-  {#      <!-- head -->#}
-  {#      <thead>#}
-  {#      <tr>#}
-  {#        <th></th>#}
-  {#        <th>Name</th>#}
-  {#        <th>Job</th>#}
-  {#        <th>Favorite Color</th>#}
-  {#      </tr>#}
-  {#      </thead>#}
-  {#      <tbody>#}
-  {#      <!-- row 1 -->#}
-  {#      <tr>#}
-  {#        <th>1</th>#}
-  {#        <td>Cy Ganderton</td>#}
-  {#        <td>Quality Control Specialist</td>#}
-  {#        <td>Blue</td>#}
-  {#      </tr>#}
-  {#      <!-- row 2 -->#}
-  {#      <tr>#}
-  {#        <th>2</th>#}
-  {#        <td>Hart Hagerty</td>#}
-  {#        <td>Desktop Support Technician</td>#}
-  {#        <td>Purple</td>#}
-  {#      </tr>#}
-  {#      <!-- row 3 -->#}
-  {#      <tr>#}
-  {#        <th>3</th>#}
-  {#        <td>Brice Swyre</td>#}
-  {#        <td>Tax Accountant</td>#}
-  {#        <td>Red</td>#}
-  {#      </tr>#}
-  {#      </tbody>#}
-  {#    </table>#}
-  {#  </div>#}
+
 {% endblock %}

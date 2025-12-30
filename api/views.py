@@ -34,7 +34,9 @@ def get_game_leaderboard(request, appid: int):
             game_data = {
                 'playtime_forever': friend_db[0].playtime_forever,
             }
-            game_leaderboard.append({"user_name": friend_db[0].user.personaname, "game_data": game_data})
+            game_leaderboard.append(
+                {"user_name": friend_db[0].user.personaname, 'user_icon': friend_db[0].user.avatar_url,
+                 'user_id': friend_db[0].user.steamid, "game_data": game_data})
         else:
             game_info = API.get_user_games(friend.steamid, games_id=[appid])
             if not game_info or game_info['game_count'] < 1:
@@ -50,9 +52,10 @@ def get_game_leaderboard(request, appid: int):
                                                        'user_id': friend.steamid,
                                                        'playtime_forever': game_info['games'][0]['playtime_forever'],
                                                    })
-            game_leaderboard.append({"user_name": friend.personaname, "game_data": {
-                'playtime_forever': int(game_info['games'][0]['playtime_forever']/60),
-            }})
+            game_leaderboard.append({"user_name": friend.personaname, 'user_icon': friend.avatar_url,
+                                     'user_steamid': friend.steamid, "game_data": {
+                    'playtime_forever': int(game_info['games'][0]['playtime_forever'] / 60),
+                }})
 
             # if 'game_info' not in result:
             #     result['game_info'] = {
