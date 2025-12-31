@@ -22,8 +22,8 @@ function getFriends() {
     });
 }
 function getLeaderboard() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const game = yield fetch('/api/leaderboard/730');
+    return __awaiter(this, arguments, void 0, function* (game_id = 730) {
+        const game = yield fetch(`/api/leaderboard/${game_id}`);
         return yield game.json();
     });
 }
@@ -58,6 +58,7 @@ function renderLeaderboard(leaderboard) {
     return __awaiter(this, void 0, void 0, function* () {
         leaderboard.sort((a, b) => (b.game_data.playtime_forever - a.game_data.playtime_forever));
         const table = document.getElementById('leaderboard');
+        table.innerHTML = '';
         for (const [i, data] of leaderboard.entries()) {
             const rank = i + 1;
             console.log(i, data);
@@ -110,7 +111,7 @@ function renderLeaderboard(leaderboard) {
                 <img src='${data.user_icon}' class="size-13 rounded-[8px] group-hover:scale-110 transition-all"/>
                 <div class="">
                   <p class="font-bold text-[18px]">${data.user_name}</p>
-                  <p class="text-slate-500 text-[10px] font-semibold">STEAM ID:${data.user_id}</p>
+                  <p class="text-slate-500 text-[10px] font-semibold">STEAM ID:${data.user_steamid}</p>
                 </div>
               </div>
             </td>
@@ -174,10 +175,11 @@ function addGameToList(game) {
         button.appendChild(img);
         button.appendChild(p);
         gamesContainer.appendChild(button);
-        button.addEventListener('click', () => {
+        button.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
             selectedGames = button;
+            yield gameClickHandler(game);
             console.log(selectedGames);
-        });
+        }));
         const gamesTitle = document.getElementById('gameTitle');
         gamesTitle.textContent = `Мои игры (${gamesContainer.childElementCount})`;
     });
@@ -187,3 +189,33 @@ gameListArea();
 addFriends();
 addFirstGame();
 let selectedGames;
+function gameClickHandler(game) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const title = document.getElementById('title');
+        const mainContent = document.getElementById('mainContent');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const body = document.body;
+        mainContent.classList.add('blur-md', 'brightness-15');
+        body.classList.add('pointer-events-none', 'overflow-clip');
+        const loadingHTML = `
+      <div class="absolute top-1/2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-1 flex flex-col items-center justify-center" id="loading">
+        <div class="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin shadow-[0_0_20px_rgba(59,130,246,0.5)]"></div>
+        <p class="mt-4 text-blue-400 font-black text-xs uppercase animate-pulse">Загрузка
+          данных...
+        </p>
+      </div>
+    `;
+        const test = `
+        <div class="absolute left-1/2 z-52 size-100 bg-lime-500"></div>
+    `;
+        loadingContainer.classList.add('max-h-screen');
+        loadingContainer.insertAdjacentHTML('afterbegin', loadingHTML);
+        const leaderboard = yield getLeaderboard(game.appid);
+        title.textContent = leaderboard.game_info.game_title;
+        yield renderLeaderboard(leaderboard.leaderboard);
+        document.getElementById('loading').remove();
+        loadingContainer.classList.remove('max-h-screen');
+        mainContent.classList.remove('blur-md', 'brightness-15');
+        body.classList.remove('pointer-events-none', 'overflow-clip');
+    });
+}
