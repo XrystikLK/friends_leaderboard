@@ -127,7 +127,6 @@ function renderLeaderboard(leaderboard) {
 }
 function addFirstGame() {
     return __awaiter(this, void 0, void 0, function* () {
-        const gameLeaderboard = yield getLeaderboard();
         yield addGameToList(gameLeaderboard.game_info);
         yield renderLeaderboard(gameLeaderboard.leaderboard);
     });
@@ -145,7 +144,6 @@ function gameListArea() {
                 addGameArea.classList.add('hidden');
             }
         });
-        const userGames = yield getUserGames();
         for (const game of userGames) {
             const gameBtn = document.createElement('button');
             const image = document.createElement('img');
@@ -166,7 +164,7 @@ function addGameToList(game) {
         const button = document.createElement('button');
         const img = document.createElement('img');
         const p = document.createElement('p');
-        selectedGames = button;
+        selectedGame = button;
         p.textContent = game.game_title;
         img.src = `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.game_icon_hash}.jpg`;
         p.className = ('text-[12px] font-semibold group-hover:text-slate-400');
@@ -174,21 +172,16 @@ function addGameToList(game) {
         button.className = ('flex items-center mb-2 gap-x-2 text-white group hover:bg-slate-800');
         button.appendChild(img);
         button.appendChild(p);
-        gamesContainer.appendChild(button);
+        gamesListContainer.appendChild(button);
         button.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
-            selectedGames = button;
+            selectedGame = button;
             yield gameClickHandler(game);
-            console.log(selectedGames);
+            console.log(selectedGame);
         }));
         const gamesTitle = document.getElementById('gameTitle');
-        gamesTitle.textContent = `Мои игры (${gamesContainer.childElementCount})`;
+        gamesTitle.textContent = `Мои игры (${gamesListContainer.childElementCount})`;
     });
 }
-const gamesContainer = document.getElementById('gameContent');
-gameListArea();
-addFriends();
-addFirstGame();
-let selectedGames;
 function gameClickHandler(game) {
     return __awaiter(this, void 0, void 0, function* () {
         const title = document.getElementById('title');
@@ -219,3 +212,20 @@ function gameClickHandler(game) {
         body.classList.remove('pointer-events-none', 'overflow-clip');
     });
 }
+function main() {
+    return __awaiter(this, void 0, void 0, function* () {
+        userGames = yield getUserGames();
+        const random_game = userGames[Math.floor(Math.random() * userGames.length)];
+        userGames = userGames.filter(game => game.appid !== random_game.appid);
+        gameListArea();
+        addFriends();
+        addGameToList(random_game);
+        selectedGame = gamesListContainer.firstElementChild;
+        selectedGame.click();
+        // addFirstGame()
+    });
+}
+const gamesListContainer = document.getElementById('gameContent');
+let selectedGame;
+let userGames;
+main();

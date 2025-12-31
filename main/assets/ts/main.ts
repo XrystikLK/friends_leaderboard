@@ -65,7 +65,7 @@ async function addFriends() {
 }
 
 async function renderLeaderboard(leaderboard: GameLeaderboard['leaderboard']) {
-    leaderboard.sort((a, b) => (b.game_data.playtime_forever - a.game_data.playtime_forever) )
+    leaderboard.sort((a, b) => (b.game_data.playtime_forever - a.game_data.playtime_forever))
     const table = document.getElementById('leaderboard')
     table!.innerHTML = ''
     for (const [i, data] of leaderboard.entries()) {
@@ -110,9 +110,9 @@ async function renderLeaderboard(leaderboard: GameLeaderboard['leaderboard']) {
         const tableRow = `
            <tr class="group hover:bg-white/[0.02] transition-colors relative ">
             <th class="text-center">
-              <div class="relative w-12 h-12 flex items-center justify-center ${rowStyle?.border} ${rowStyle.bg} ${rowStyle.text} rounded-2xl ${rowStyle.shadow} font-black text-xl transition-transform ${i in [0, 1, 2] ? 'group-hover:scale-110 group-hover:rotate-3': ''}  duration-300">
+              <div class="relative w-12 h-12 flex items-center justify-center ${rowStyle?.border} ${rowStyle.bg} ${rowStyle.text} rounded-2xl ${rowStyle.shadow} font-black text-xl transition-transform ${i in [0, 1, 2] ? 'group-hover:scale-110 group-hover:rotate-3' : ''}  duration-300">
                 ${i + 1}
-                <div class="absolute -top-1.5 -right-1.5 ${i in [0, 1, 2] ? 'bg-slate-900 p-0.5 border border-slate-700': ''} rounded-full  text-white">
+                <div class="absolute -top-1.5 -right-1.5 ${i in [0, 1, 2] ? 'bg-slate-900 p-0.5 border border-slate-700' : ''} rounded-full  text-white">
                   ${rowStyle.svg}
                 </div>
               </div>
@@ -139,7 +139,8 @@ async function renderLeaderboard(leaderboard: GameLeaderboard['leaderboard']) {
 }
 
 async function addFirstGame() {
-    const gameLeaderboard: GameLeaderboard = await getLeaderboard()
+
+
     await addGameToList(gameLeaderboard.game_info)
     await renderLeaderboard(gameLeaderboard.leaderboard)
 }
@@ -157,7 +158,7 @@ async function gameListArea() {
         }
     })
 
-    const userGames: UserGames = await getUserGames()
+
     for (const game of userGames) {
         const gameBtn = document.createElement('button')
         const image = document.createElement('img')
@@ -178,7 +179,7 @@ async function addGameToList(game: UserGames[0]) {
     const button = document.createElement('button')
     const img = document.createElement('img')
     const p = document.createElement('p')
-    selectedGames = button
+    selectedGame = button
     p.textContent = game.game_title
     img.src = `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.game_icon_hash}.jpg`
     p.className = ('text-[12px] font-semibold group-hover:text-slate-400')
@@ -186,26 +187,20 @@ async function addGameToList(game: UserGames[0]) {
     button.className = ('flex items-center mb-2 gap-x-2 text-white group hover:bg-slate-800')
     button.appendChild(img)
     button.appendChild(p)
-    gamesContainer!.appendChild(button)
+    gamesListContainer!.appendChild(button)
 
     button.addEventListener('click', async () => {
-        selectedGames = button
+        selectedGame = button
         await gameClickHandler(game)
-        console.log(selectedGames)
+        console.log(selectedGame)
     })
 
     const gamesTitle = document.getElementById('gameTitle')
-    gamesTitle!.textContent = `Мои игры (${gamesContainer!.childElementCount})`
+    gamesTitle!.textContent = `Мои игры (${gamesListContainer!.childElementCount})`
 }
 
-const gamesContainer = document.getElementById('gameContent')
 
-gameListArea()
-addFriends()
-addFirstGame()
-let selectedGames: HTMLButtonElement
-
-async function gameClickHandler(game: UserGames[0]){
+async function gameClickHandler(game: UserGames[0]) {
     const title = document.getElementById('title')
     const mainContent = document.getElementById('mainContent')
     const loadingContainer = document.getElementById('loadingContainer')
@@ -236,3 +231,21 @@ async function gameClickHandler(game: UserGames[0]){
     mainContent!.classList.remove('blur-md', 'brightness-15')
     body.classList.remove('pointer-events-none', 'overflow-clip')
 }
+
+async function main() {
+    userGames = await getUserGames()
+    const random_game = userGames[Math.floor(Math.random() * userGames.length)]
+    userGames = userGames.filter(game => game.appid !== random_game.appid)
+    gameListArea()
+    addFriends()
+    addGameToList(random_game)
+    selectedGame = gamesListContainer!.firstElementChild as HTMLButtonElement
+    selectedGame.click()
+    // addFirstGame()
+}
+
+const gamesListContainer = document.getElementById('gameContent')
+let selectedGame: HTMLButtonElement
+let userGames: UserGames
+
+main()
