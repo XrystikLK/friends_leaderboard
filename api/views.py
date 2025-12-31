@@ -21,9 +21,8 @@ def getMoreData(request):
 
 @api_view(['GET'])
 def get_game_leaderboard(request, appid: int):
-    current_user = Users.objects.get(steamid=request.session.get('steamid'))
-    friends = current_user.friends.all()
-    steamid = current_user.steamid
+    current_user_game = UserGameStats.objects.get(user_id=request.session.get('steamid'), game_id=appid)
+    friends = current_user_game.user.friends.all()
     # user_games_ids = UserGameStats.objects.filter(user_id=steamid).values_list('game_id', flat=True)
     # user_random_gameid = random.choice(user_games_ids)
     # print(user_random_gameid)
@@ -36,7 +35,7 @@ def get_game_leaderboard(request, appid: int):
             }
             game_leaderboard.append(
                 {"user_name": friend_db[0].user.personaname, 'user_icon': friend_db[0].user.avatar_url,
-                 'user_id': friend_db[0].user.steamid, "game_data": game_data})
+                 'user_steamid': friend_db[0].user.steamid, "game_data": game_data})
         else:
             game_info = API.get_user_games(friend.steamid, games_id=[appid])
             if not game_info or game_info['game_count'] < 1:
@@ -65,13 +64,20 @@ def get_game_leaderboard(request, appid: int):
             #         "game_title": game_info['games'][0]['name'],
             #     }
             #     print('1 Раз заполнили')
-    game_info = Game.objects.get(appid=appid)
+
+    game_leaderboard.append({
+        "user_name": current_user_game.user.personaname,
+        "user_icon": current_user_game.user.avatar_url,
+        "user_steamid": current_user_game.user.steamid,
+        "game_data": {
+            "playtime_forever": current_user_game.playtime_forever,
+        }})
 
     result = {
         'game_info': {
             'appid': appid,
-            'game_title': game_info.name,
-            'game_icon_hash': game_info.icon_url,
+            'game_title': current_user_game.game.name,
+            'game_icon_hash': current_user_game.game.icon_url,
         },
         "leaderboard": game_leaderboard,
     }
@@ -87,6 +93,7 @@ def get_user_friends(request):
         friends_obj.append(model_to_dict(friend))
     print(friends_obj)
     return Response(friends_obj)
+
 
 @api_view(['GET'])
 def get_user_games(request):
