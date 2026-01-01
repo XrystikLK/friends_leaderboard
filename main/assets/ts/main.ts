@@ -109,7 +109,7 @@ async function renderLeaderboard(leaderboard: GameLeaderboard['leaderboard']) {
 
         const tableRow = `
            <tr class="group hover:bg-white/[0.02] transition-colors relative ">
-            <th class="text-center">
+            <th class="flex justify-center">
               <div class="relative w-12 h-12 flex items-center justify-center ${rowStyle?.border} ${rowStyle.bg} ${rowStyle.text} rounded-2xl ${rowStyle.shadow} font-black text-xl transition-transform ${i in [0, 1, 2] ? 'group-hover:scale-110 group-hover:rotate-3' : ''}  duration-300">
                 ${i + 1}
                 <div class="absolute -top-1.5 -right-1.5 ${i in [0, 1, 2] ? 'bg-slate-900 p-0.5 border border-slate-700' : ''} rounded-full  text-white">
@@ -224,8 +224,8 @@ async function gameClickHandler(game: UserGames[0]) {
 
     const leaderboard = await getLeaderboard(game.appid)
     title!.textContent = leaderboard.game_info.game_title
-    await renderLeaderboard(leaderboard.leaderboard)
     await renderTableWidgets(leaderboard.leaderboard)
+    await renderLeaderboard(leaderboard.leaderboard)
 
     document.getElementById('loading')!.remove()
     loadingContainer!.classList.remove('max-h-screen')
@@ -253,8 +253,6 @@ async function main() {
     addGameToList(random_game)
     selectedGame = gamesListContainer!.firstElementChild as HTMLButtonElement
     selectedGame.click()
-
-    renderTableWidgets()
     // addFirstGame()
 }
 

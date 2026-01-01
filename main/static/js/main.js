@@ -98,7 +98,7 @@ function renderLeaderboard(leaderboard) {
             }
             const tableRow = `
            <tr class="group hover:bg-white/[0.02] transition-colors relative ">
-            <th class="text-center">
+            <th class="flex justify-center">
               <div class="relative w-12 h-12 flex items-center justify-center ${rowStyle === null || rowStyle === void 0 ? void 0 : rowStyle.border} ${rowStyle.bg} ${rowStyle.text} rounded-2xl ${rowStyle.shadow} font-black text-xl transition-transform ${i in [0, 1, 2] ? 'group-hover:scale-110 group-hover:rotate-3' : ''}  duration-300">
                 ${i + 1}
                 <div class="absolute -top-1.5 -right-1.5 ${i in [0, 1, 2] ? 'bg-slate-900 p-0.5 border border-slate-700' : ''} rounded-full  text-white">
@@ -205,8 +205,8 @@ function gameClickHandler(game) {
         loadingContainer.insertAdjacentHTML('afterbegin', loadingHTML);
         const leaderboard = yield getLeaderboard(game.appid);
         title.textContent = leaderboard.game_info.game_title;
-        yield renderLeaderboard(leaderboard.leaderboard);
         yield renderTableWidgets(leaderboard.leaderboard);
+        yield renderLeaderboard(leaderboard.leaderboard);
         document.getElementById('loading').remove();
         loadingContainer.classList.remove('max-h-screen');
         mainContent.classList.remove('blur-md', 'brightness-15');
@@ -234,7 +234,6 @@ function main() {
         addGameToList(random_game);
         selectedGame = gamesListContainer.firstElementChild;
         selectedGame.click();
-        renderTableWidgets();
         // addFirstGame()
     });
 }
