@@ -225,11 +225,23 @@ async function gameClickHandler(game: UserGames[0]) {
     const leaderboard = await getLeaderboard(game.appid)
     title!.textContent = leaderboard.game_info.game_title
     await renderLeaderboard(leaderboard.leaderboard)
+    await renderTableWidgets(leaderboard.leaderboard)
 
     document.getElementById('loading')!.remove()
     loadingContainer!.classList.remove('max-h-screen')
     mainContent!.classList.remove('blur-md', 'brightness-15')
     body.classList.remove('pointer-events-none', 'overflow-clip')
+}
+
+async function renderTableWidgets(leaderboard: GameLeaderboard['leaderboard']) {
+    const time = document.getElementById('timeWidget')
+    const users = document.getElementById('usersWidget')
+    const leader = document.getElementById('leaderWidget')
+    time!.textContent = `${(leaderboard.reduce((accumulator, currentValue) =>
+        accumulator + currentValue.game_data.playtime_forever, 0)).toLocaleString()} ч.`
+    users!.textContent = leaderboard.length.toString()
+    leaderboard.sort((a, b) => (b.game_data.playtime_forever - a.game_data.playtime_forever))
+    leader!.textContent = leaderboard[0].user_name
 }
 
 async function main() {
@@ -241,6 +253,8 @@ async function main() {
     addGameToList(random_game)
     selectedGame = gamesListContainer!.firstElementChild as HTMLButtonElement
     selectedGame.click()
+
+    renderTableWidgets()
     // addFirstGame()
 }
 
