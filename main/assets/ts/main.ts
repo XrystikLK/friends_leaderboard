@@ -162,9 +162,20 @@ async function gameListArea() {
     for (const game of userGames) {
         const gameBtn = document.createElement('button')
         const image = document.createElement('img')
-        gameBtn.textContent = game.game_title
-        gameBtn.className = 'group relative flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 hover:border-blue-500/50 p-4 rounded-2xl transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden'
-        // image.src = `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.game_icon_hash}.jpg`
+
+        gameBtn.innerHTML = `
+            <div class="group relative flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 hover:border-blue-500/50 p-4 rounded-2xl transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+              <img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/header.jpg" class="size-14 rounded-[12px] object-cover"/>
+              <div class="flex flex-col text-start">
+                <p class="text-sm font-black text-slate-100 group-hover:text-blue-400 transition-colors line-clamp-2">${game.game_title}</p>
+                <p class="text-[10px] text-slate-500 mt-1 font-bold uppercase group-hover:text-slate-300 transition-colors">appid: ${game.appid}</p>
+              </div>
+            </div>
+        `
+        // gameBtn.textContent = game.game_title
+        // gameBtn.className = 'group relative flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 hover:border-blue-500/50 p-4 rounded-2xl transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden'
+        // image.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/header.jpg`
+        // image.classList.add('size-14', 'rounded-[12px]', 'object-cover')
         // gameBtn.appendChild(image)
         gameBtn.onclick = async () => {
             await addGameToList(game)
