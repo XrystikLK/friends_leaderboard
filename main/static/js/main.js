@@ -43,15 +43,15 @@ function addFriends() {
             const p = document.createElement('p');
             p.textContent = friend.personaname;
             img.src = friend.avatar_url;
-            p.className = ('text-[12px] font-semibold group-hover:text-slate-400');
-            img.className = ('size-6 rounded-full');
-            button.className = ('flex items-center mb-2 gap-x-2 text-white group hover:bg-slate-800');
+            p.className = ('text-[14px] font-semibold group-hover:text-slate-400 text-justify');
+            img.className = ('size-9 rounded-full');
+            button.className = ('w-full flex items-center gap-x-2 text-white group hover:bg-slate-800 py-2 px-2 rounded-[12px]');
             button.appendChild(img);
             button.appendChild(p);
             friendsContainer.appendChild(button);
         }
         const friendsTitle = document.getElementById('friendTitle');
-        friendsTitle.textContent = `Список друзей (${friends.length})`;
+        friendsTitle.textContent = `СПИСОК ДРУЗЕЙ (${friends.length})`;
     });
 }
 function renderLeaderboard(leaderboard) {
@@ -147,9 +147,19 @@ function gameListArea() {
         for (const game of userGames) {
             const gameBtn = document.createElement('button');
             const image = document.createElement('img');
-            gameBtn.textContent = game.game_title;
-            gameBtn.className = 'group relative flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 hover:border-blue-500/50 p-4 rounded-2xl transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden';
-            // image.src = `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.game_icon_hash}.jpg`
+            gameBtn.innerHTML = `
+            <div class="group relative flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 hover:border-blue-500/50 p-4 rounded-2xl transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+              <img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/header.jpg" class="size-14 rounded-[12px] object-cover"/>
+              <div class="flex flex-col text-start">
+                <p class="text-sm font-black text-slate-100 group-hover:text-blue-400 transition-colors line-clamp-2">${game.game_title}</p>
+                <p class="text-[10px] text-slate-500 mt-1 font-bold uppercase group-hover:text-slate-300 transition-colors">appid: ${game.appid}</p>
+              </div>
+            </div>
+        `;
+            // gameBtn.textContent = game.game_title
+            // gameBtn.className = 'group relative flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 hover:border-blue-500/50 p-4 rounded-2xl transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden'
+            // image.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/header.jpg`
+            // image.classList.add('size-14', 'rounded-[12px]', 'object-cover')
             // gameBtn.appendChild(image)
             gameBtn.onclick = () => __awaiter(this, void 0, void 0, function* () {
                 yield addGameToList(game);
@@ -167,9 +177,9 @@ function addGameToList(game) {
         selectedGame = button;
         p.textContent = game.game_title;
         img.src = `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.game_icon_hash}.jpg`;
-        p.className = ('text-[12px] font-semibold group-hover:text-slate-400');
-        img.className = ('size-6 rounded-full');
-        button.className = ('flex items-center mb-2 gap-x-2 text-white group hover:bg-slate-800');
+        p.className = ('text-[14px] font-semibold group-hover:text-slate-400 text-justify');
+        img.className = ('size-9 rounded-full');
+        button.className = ('w-full flex items-center gap-x-2 text-white group hover:bg-slate-800 py-2 px-2 rounded-[12px]');
         button.appendChild(img);
         button.appendChild(p);
         gamesListContainer.appendChild(button);
@@ -179,7 +189,7 @@ function addGameToList(game) {
             console.log(selectedGame);
         }));
         const gamesTitle = document.getElementById('gameTitle');
-        gamesTitle.textContent = `Мои игры (${gamesListContainer.childElementCount})`;
+        gamesTitle.textContent = `МОИ ИГРЫ (${gamesListContainer.childElementCount})`;
     });
 }
 function gameClickHandler(game) {

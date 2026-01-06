@@ -14,23 +14,30 @@
       </div>
       <div class="flex flex-col grow">
         <button>Общая таблица</button>
-        <div class="collapse collapse-arrow w-[195px]">
-          <input type="checkbox" name="my-accordion-2" class="pl-0"/>
-          <div class="collapse-title font-semibold overflow-hidden pl-0 text-slate-400 text-[12px]"
+        <div class="collapse collapse-arrow ">
+          <input type="checkbox" name="my-accordion-1" class="pl-0"/>
+          <div class="collapse-title font-semibold  pl-0 text-slate-400 text-[12px]"
                id="friendTitle"></div>
-          <div class="collapse-content text-sm pl-1 overflow-scroll">
-            <div class="" id="friendContent">
-
+          <div class="collapse-content text-sm pl-1">
+            <div class="max-h-[30vh] overflow-y-scroll">
+              <div class="" id="friendContent">
+              </div>
             </div>
           </div>
         </div>
-        <div class="collapse collapse-arrow w-[195px]">
+        <div class="collapse collapse-arrow">
           <input type="checkbox" name="my-accordion-2" checked class="pl-0"/>
           <div class="collapse-title font-semibold overflow-hidden pl-0 text-slate-400 text-[12px]"
                id="gameTitle">Мои игры
           </div>
-          <div class="collapse-content text-sm pl-1" id="gameContent">
-          </div>
+
+            <div class="collapse-content text-sm pl-1">
+              <div class="max-h-[30vh] overflow-y-auto">
+                <div class="" id="gameContent">
+                </div>
+              </div>
+            </div>
+
         </div>
       </div>
       <div class="flex items-center gap-3 mb-3">

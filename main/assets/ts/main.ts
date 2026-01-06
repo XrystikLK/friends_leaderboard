@@ -53,15 +53,15 @@ async function addFriends() {
         const p = document.createElement('p')
         p.textContent = friend.personaname
         img.src = friend.avatar_url
-        p.className = ('text-[12px] font-semibold group-hover:text-slate-400')
-        img.className = ('size-6 rounded-full')
-        button.className = ('flex items-center mb-2 gap-x-2 text-white group hover:bg-slate-800')
+        p.className = ('text-[14px] font-semibold group-hover:text-slate-400 text-justify')
+        img.className = ('size-9 rounded-full')
+        button.className = ('w-full flex items-center gap-x-2 text-white group hover:bg-slate-800 py-2 px-2 rounded-[12px]')
         button.appendChild(img)
         button.appendChild(p)
         friendsContainer!.appendChild(button)
     }
     const friendsTitle = document.getElementById('friendTitle')
-    friendsTitle!.textContent = `Список друзей (${friends.length})`
+    friendsTitle!.textContent = `СПИСОК ДРУЗЕЙ (${friends.length})`
 }
 
 async function renderLeaderboard(leaderboard: GameLeaderboard['leaderboard']) {
@@ -193,9 +193,9 @@ async function addGameToList(game: UserGames[0]) {
     selectedGame = button
     p.textContent = game.game_title
     img.src = `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.game_icon_hash}.jpg`
-    p.className = ('text-[12px] font-semibold group-hover:text-slate-400')
-    img.className = ('size-6 rounded-full')
-    button.className = ('flex items-center mb-2 gap-x-2 text-white group hover:bg-slate-800')
+    p.className = ('text-[14px] font-semibold group-hover:text-slate-400 text-justify')
+    img.className = ('size-9 rounded-full')
+    button.className = ('w-full flex items-center gap-x-2 text-white group hover:bg-slate-800 py-2 px-2 rounded-[12px]')
     button.appendChild(img)
     button.appendChild(p)
     gamesListContainer!.appendChild(button)
@@ -207,7 +207,7 @@ async function addGameToList(game: UserGames[0]) {
     })
 
     const gamesTitle = document.getElementById('gameTitle')
-    gamesTitle!.textContent = `Мои игры (${gamesListContainer!.childElementCount})`
+    gamesTitle!.textContent = `МОИ ИГРЫ (${gamesListContainer!.childElementCount})`
 }
 
 
