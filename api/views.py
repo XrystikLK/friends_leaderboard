@@ -21,63 +21,77 @@ def getMoreData(request):
 
 @api_view(['GET'])
 def get_game_leaderboard(request, appid: int):
-    current_user_game = UserGameStats.objects.get(user_id=request.session.get('steamid'), game_id=appid)
+    current_user_id = request.session.get('steamid')
+    current_user_game = UserGameStats.objects.select_related('user', 'game').get(user_id=current_user_id, game_id=appid)
+
     friends = current_user_game.user.friends.all()
-    # user_games_ids = UserGameStats.objects.filter(user_id=steamid).values_list('game_id', flat=True)
-    # user_random_gameid = random.choice(user_games_ids)
-    # print(user_random_gameid)
-    game_leaderboard = []
+    friend_ids = [friend.steamid for friend in friends]
+
+    existing_stats = UserGameStats.objects.filter(user_id__in=friend_ids, game_id=appid).select_related('user')
+    existing_stats_map = {stat.user_id: stat for stat in existing_stats}
+    print(f"Найдено {len(existing_stats_map)} записей о прохождении игры друзьями в бд")
+
+    missing_friend_ids = [fid for fid in friend_ids if fid not in existing_stats_map]
+    print(f"Не хватает данных для {len(missing_friend_ids)} друзей. Запрашиваем из API")
+
+    stats_to_create = []
+    newly_fetched_data = []
     hidden_game_profiles = 0
     without_game_profiles = 0
-    for friend in friends:
-        if (friend_db := UserGameStats.objects.filter(user_id=friend.steamid, game_id=appid)).exists():
-            print('Информация о пользователе и игре есть базе данных')
-            game_data = {
-                'playtime_forever': friend_db[0].playtime_forever,
-            }
-            game_leaderboard.append(
-                {"user_name": friend_db[0].user.personaname, 'user_icon': friend_db[0].user.avatar_url,
-                 'user_steamid': friend_db[0].user.steamid, "game_data": game_data})
-        else:
-            game_info = API.get_user_games(friend.steamid, games_id=[appid], include_free_games=True)
-            if not game_info or game_info['game_count'] < 1:
-                if not game_info:
-                    hidden_game_profiles += 1
-                else:
-                    without_game_profiles += 1
-                print('Continue', game_info, friend.steamid, friend.personaname, appid, hidden_game_profiles, without_game_profiles)
-                continue
-            print('Продолжаем обрабатывать', game_info)
-            Game.objects.update_or_create(appid=game_info['games'][0]['appid'], defaults={
-                'appid': game_info['games'][0]['appid'],
-            })
-            UserGameStats.objects.update_or_create(game_id=game_info['games'][0]['appid'], user_id=friend.steamid,
-                                                   defaults={
-                                                       'game_id': game_info['games'][0]['appid'],
-                                                       'user_id': friend.steamid,
-                                                       'playtime_forever': int(game_info['games'][0]['playtime_forever'] / 60),
-                                                   })
-            game_leaderboard.append({"user_name": friend.personaname, 'user_icon': friend.avatar_url,
-                                     'user_steamid': friend.steamid, "game_data": {
-                    'playtime_forever': int(game_info['games'][0]['playtime_forever'] / 60),
-                }})
 
-            # if 'game_info' not in result:
-            #     result['game_info'] = {
-            #         "game_id": game_info['games'][0]['appid'],
-            #         "playtime_forever": game_info['games'][0]['playtime_forever'],
-            #         "image_url": game_info['games'][0]['img_icon_url'],
-            #         "game_title": game_info['games'][0]['name'],
-            #     }
-            #     print('1 Раз заполнили')
+    missing_friends_map = {friend.steamid: friend for friend in friends if friend.steamid in missing_friend_ids}
+
+    for friend_id in missing_friend_ids:
+        friend_obj = missing_friends_map[friend_id]
+        try:
+            game_info = API.get_user_games(friend_id, games_id=[appid], include_free_games=True)
+            if not game_info:
+                hidden_game_profiles += 1
+                continue
+            if game_info.get('game_count', 0) < 1:
+                without_game_profiles += 1
+                continue
+
+            playtime = int(game_info['games'][0].get('playtime_forever', 0) / 60)
+
+            stats_to_create.append(UserGameStats(
+                user=friend_obj,
+                game=current_user_game.game,
+                playtime_forever=playtime
+            ))
+            newly_fetched_data.append({
+                "user_name": friend_obj.personaname,
+                "user_icon": friend_obj.avatar_url,
+                "user_steamid": friend_obj.steamid,
+                "game_data": {"playtime_forever": playtime}
+            })
+
+        except Exception as e:
+            print(f"Ошибка при обработке друга {friend_id} из API: {e}")
+            hidden_game_profiles += 1
+
+    if stats_to_create:
+        UserGameStats.objects.bulk_create(stats_to_create)
+        print(f"Сохранено {len(stats_to_create)} новых записей в БД.")
+
+    game_leaderboard = []
+
+    for stat in existing_stats:
+        game_leaderboard.append({
+            "user_name": stat.user.personaname,
+            "user_icon": stat.user.avatar_url,
+            "user_steamid": stat.user.steamid,
+            "game_data": {"playtime_forever": stat.playtime_forever}
+        })
+
+    game_leaderboard.extend(newly_fetched_data)
 
     game_leaderboard.append({
         "user_name": current_user_game.user.personaname,
         "user_icon": current_user_game.user.avatar_url,
         "user_steamid": current_user_game.user.steamid,
-        "game_data": {
-            "playtime_forever": current_user_game.playtime_forever,
-        }})
+        "game_data": {"playtime_forever": current_user_game.playtime_forever}
+    })
 
     result = {
         'game_info': {

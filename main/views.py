@@ -18,14 +18,9 @@ def index(request):
             profile_url = form.cleaned_data['profile_url']
             try:
                 steamid = api.get_user_steamid(profile_url)
-                current_user = Users.objects.filter(steamid=steamid)
-
-                if current_user.exists():
-                    print(f"Пользователь {steamid} уже есть в базе. Перенаправляем на профиль.")
-                    return redirect('user_profile', steamid=steamid)
-
                 record_user_summaries(steamid)
-                record_user_friends(steamid, current_user)
+                current_user_obj = Users.objects.get(steamid=steamid)
+                record_user_friends(steamid, current_user_obj)
 
                 return redirect('user_profile', steamid=steamid)
 
