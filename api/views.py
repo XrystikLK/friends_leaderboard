@@ -111,8 +111,7 @@ def get_user_friends(request):
     friends = current_user.friends.all()
     friends_obj = []
     for friend in friends:
-        friends_obj.append(model_to_dict(friend))
-    print(friends_obj)
+        friends_obj.append(model_to_dict(friend, exclude=['friends_last_updated', 'friends']))
     return Response(friends_obj)
 
 
