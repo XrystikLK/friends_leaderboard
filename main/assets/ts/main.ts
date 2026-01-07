@@ -10,7 +10,9 @@ type GameLeaderboard = {
     game_info: {
         appid: number,
         game_icon_hash: string,
-        game_title: string
+        game_title: string,
+        hidden_profiles: number,
+        without_games: number,
     }
     leaderboard: {
         user_name: string,
@@ -219,7 +221,7 @@ async function gameClickHandler(game: UserGames[0]) {
     const body = document.body
     mainContent!.classList.add('blur-md', 'brightness-15')
     body.classList.add('pointer-events-none', 'overflow-clip')
-
+    document.body.scrollTop = document.documentElement.scrollTop = 0
     const loadingHTML = `
       <div class="absolute top-1/2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-1 flex flex-col items-center justify-center" id="loading">
         <div class="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin shadow-[0_0_20px_rgba(59,130,246,0.5)]"></div>
@@ -247,7 +249,7 @@ async function gameClickHandler(game: UserGames[0]) {
 
 
     title!.textContent = leaderboard.game_info.game_title
-    await renderTableWidgets(leaderboard.leaderboard)
+    await renderTableWidgets(leaderboard)
     await renderLeaderboard(leaderboard.leaderboard)
 
     document.getElementById('loading')!.remove()
@@ -256,15 +258,26 @@ async function gameClickHandler(game: UserGames[0]) {
     body.classList.remove('pointer-events-none', 'overflow-clip')
 }
 
-async function renderTableWidgets(leaderboard: GameLeaderboard['leaderboard']) {
+async function renderTableWidgets(leaderboard: GameLeaderboard) {
     const time = document.getElementById('timeWidget')
     const users = document.getElementById('usersWidget')
+    const usersAdditionalInfo = document.getElementById('usersAdditionalInfo')
     const leader = document.getElementById('leaderWidget')
-    time!.textContent = `${(leaderboard.reduce((accumulator, currentValue) =>
+    time!.textContent = `${(leaderboard.leaderboard.reduce((accumulator, currentValue) =>
         accumulator + currentValue.game_data.playtime_forever, 0)).toLocaleString()} ч.`
-    users!.textContent = leaderboard.length.toString()
-    leaderboard.sort((a, b) => (b.game_data.playtime_forever - a.game_data.playtime_forever))
-    leader!.textContent = leaderboard[0].user_name
+    users!.innerHTML = `
+        <p>${leaderboard.leaderboard.length.toString()}<span class="text-2xl text-slate-500">/${leaderboard.game_info.hidden_profiles + leaderboard.game_info.without_games + leaderboard.leaderboard.length - 1}</span></p>
+    `
+    usersAdditionalInfo!.innerHTML = `
+        <div class="flex items-center gap-2 px-2.5 py-1 bg-blue-500/10 border border-blue-500/20 rounded-lg text-[10px] font-black text-blue-400 uppercase tracking-tighter shadow-sm"">
+          <p>${leaderboard.game_info.hidden_profiles} <span class="text-[10px] lowercase">скрыты</span></p>
+        </div>
+        <div class="flex items-center gap-2 px-2.5 py-1 bg-orange-500/10 border border-orange-500/20 rounded-lg text-[10px] font-black text-orange-400 uppercase tracking-tighter shadow-sm">
+          <p>${leaderboard.game_info.without_games - 1} <span class="text-[10px] lowercase">нет игры</span></p>
+        </div>
+    `
+    leaderboard.leaderboard.sort((a, b) => (b.game_data.playtime_forever - a.game_data.playtime_forever))
+    leader!.textContent = leaderboard.leaderboard[0].user_name
 }
 
 async function main() {

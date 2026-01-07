@@ -27,6 +27,8 @@ def get_game_leaderboard(request, appid: int):
     # user_random_gameid = random.choice(user_games_ids)
     # print(user_random_gameid)
     game_leaderboard = []
+    hidden_game_profiles = 0
+    without_game_profiles = 0
     for friend in friends:
         if (friend_db := UserGameStats.objects.filter(user_id=friend.steamid, game_id=appid)).exists():
             print('Информация о пользователе и игре есть базе данных')
@@ -37,9 +39,13 @@ def get_game_leaderboard(request, appid: int):
                 {"user_name": friend_db[0].user.personaname, 'user_icon': friend_db[0].user.avatar_url,
                  'user_steamid': friend_db[0].user.steamid, "game_data": game_data})
         else:
-            game_info = API.get_user_games(friend.steamid, games_id=[appid])
+            game_info = API.get_user_games(friend.steamid, games_id=[appid], include_free_games=True)
             if not game_info or game_info['game_count'] < 1:
-                print('Continue', game_info)
+                if not game_info:
+                    hidden_game_profiles += 1
+                else:
+                    without_game_profiles += 1
+                print('Continue', game_info, friend.steamid, friend.personaname, appid, hidden_game_profiles, without_game_profiles)
                 continue
             print('Продолжаем обрабатывать', game_info)
             Game.objects.update_or_create(appid=game_info['games'][0]['appid'], defaults={
@@ -49,7 +55,7 @@ def get_game_leaderboard(request, appid: int):
                                                    defaults={
                                                        'game_id': game_info['games'][0]['appid'],
                                                        'user_id': friend.steamid,
-                                                       'playtime_forever': game_info['games'][0]['playtime_forever'],
+                                                       'playtime_forever': int(game_info['games'][0]['playtime_forever'] / 60),
                                                    })
             game_leaderboard.append({"user_name": friend.personaname, 'user_icon': friend.avatar_url,
                                      'user_steamid': friend.steamid, "game_data": {
@@ -78,11 +84,12 @@ def get_game_leaderboard(request, appid: int):
             'appid': appid,
             'game_title': current_user_game.game.name,
             'game_icon_hash': current_user_game.game.icon_url,
+            'hidden_profiles': hidden_game_profiles,
+            'without_games': without_game_profiles
         },
         "leaderboard": game_leaderboard,
     }
     return Response(result)
-
 
 @api_view(['GET'])
 def get_user_friends(request):

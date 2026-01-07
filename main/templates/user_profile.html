@@ -98,13 +98,17 @@
             <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
               {% lucide 'users' size=80 %}
             </div>
-            <div class="p-2.5 bg-blue-500/10 text-purple-500 rounded-xl w-fit mb-4 border border-purple-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+            <div class="p-2.5 bg-blue-500/10 text-purple-500 rounded-xl w-fit mb-2 border border-purple-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
               {% lucide 'users' size=20 %}
             </div>
-            <div class="text-3xl font-black" id="usersWidget"></div>
-            <div class="text-xs text-slate-500 mt-1 uppercase font-bold flex gap-2 items-center">
-              <div class="size-2 bg-purple-500 rounded-full animate-pulse"></div>
-              <p>Участников</p>
+            <div class="text-3xl font-black" id="usersWidget">
+            </div>
+            <div class="text-xs text-slate-500 mt-1 uppercase font-bold flex gap-2 items-center flex justify-between">
+              <div class="flex items-center gap-x-1">
+                <div class="size-2 bg-purple-500 rounded-full animate-pulse"></div>
+                <p>Участников</p>
+              </div>
+              <div class="flex gap-x-1" id="usersAdditionalInfo"></div>
             </div>
           </div>
           <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 relative overflow-hidden group shadow-lg grow flex-1/3 hover:-translate-y-2 transition-all duration-500">
