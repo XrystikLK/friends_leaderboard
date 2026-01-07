@@ -35,6 +35,7 @@ async function getFriends() {
 }
 
 async function getLeaderboard(game_id: number = 730): Promise<GameLeaderboard> {
+
     const game = await fetch(`/api/leaderboard/${game_id}`)
     return await game.json()
 }
@@ -233,7 +234,18 @@ async function gameClickHandler(game: UserGames[0]) {
     loadingContainer!.classList.add('max-h-screen')
     loadingContainer!.insertAdjacentHTML('afterbegin', loadingHTML)
 
-    const leaderboard = await getLeaderboard(game.appid)
+    let leaderboard
+    const tableCache = sessionStorage.getItem(game.appid.toString())
+    if (tableCache){
+        console.log("Берём из кеша")
+        leaderboard = JSON.parse(tableCache)
+    }
+    else {
+        leaderboard = await getLeaderboard(game.appid)
+        sessionStorage.setItem(leaderboard.game_info.appid.toString(), JSON.stringify(leaderboard))
+    }
+
+
     title!.textContent = leaderboard.game_info.game_title
     await renderTableWidgets(leaderboard.leaderboard)
     await renderLeaderboard(leaderboard.leaderboard)
@@ -270,5 +282,4 @@ async function main() {
 const gamesListContainer = document.getElementById('gameContent')
 let selectedGame: HTMLButtonElement
 let userGames: UserGames
-
 main()

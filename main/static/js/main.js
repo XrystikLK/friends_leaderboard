@@ -213,7 +213,16 @@ function gameClickHandler(game) {
     `;
         loadingContainer.classList.add('max-h-screen');
         loadingContainer.insertAdjacentHTML('afterbegin', loadingHTML);
-        const leaderboard = yield getLeaderboard(game.appid);
+        let leaderboard;
+        const tableCache = sessionStorage.getItem(game.appid.toString());
+        if (tableCache) {
+            console.log("Берём из кеша");
+            leaderboard = JSON.parse(tableCache);
+        }
+        else {
+            leaderboard = yield getLeaderboard(game.appid);
+            sessionStorage.setItem(leaderboard.game_info.appid.toString(), JSON.stringify(leaderboard));
+        }
         title.textContent = leaderboard.game_info.game_title;
         yield renderTableWidgets(leaderboard.leaderboard);
         yield renderLeaderboard(leaderboard.leaderboard);
