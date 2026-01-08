@@ -56,15 +56,15 @@ async function addFriends() {
         const p = document.createElement('p')
         p.textContent = friend.personaname
         img.src = friend.avatar_url
-        p.className = ('text-[14px] font-semibold group-hover:text-slate-400 text-left')
+        p.className = ('text-[14px] font-semibold group-hover:text-slate-300 text-left')
         img.className = ('size-9 rounded-full')
-        button.className = ('w-full flex items-center gap-x-2 text-white group hover:bg-slate-800 py-2 px-2 rounded-[12px]')
+        button.className = ('w-full flex items-center gap-x-2 text-white group hover:bg-slate-600/25 py-2 px-2 rounded-[12px]')
         button.appendChild(img)
         button.appendChild(p)
         friendsContainer!.appendChild(button)
     }
     const friendsTitle = document.getElementById('friendTitle')
-    friendsTitle!.textContent = `СПИСОК ДРУЗЕЙ (${friends.length})`
+    friendsTitle!.children[0].children[1].textContent = `СПИСОК ДРУЗЕЙ (${friends.length})`
 }
 
 async function renderLeaderboard(leaderboard: GameLeaderboard['leaderboard']) {
@@ -112,7 +112,7 @@ async function renderLeaderboard(leaderboard: GameLeaderboard['leaderboard']) {
         const tableRow = `
            <tr class="group hover:bg-white/[0.02] transition-colors relative ">
             <th class="flex justify-center">
-              <div class="relative w-12 h-12 flex items-center justify-center ${rowStyle?.border} ${rowStyle.bg} ${rowStyle.text} rounded-2xl ${rowStyle.shadow} font-black text-xl transition-transform ${i in [0, 1, 2] ? 'group-hover:scale-110 group-hover:rotate-3' : ''}  duration-300">
+              <div class="relative size-13 flex items-center justify-center ${rowStyle?.border} ${rowStyle.bg} ${rowStyle.text} rounded-2xl ${rowStyle.shadow} font-black text-xl transition-transform ${i in [0, 1, 2] ? 'group-hover:scale-110 group-hover:rotate-3' : ''}  duration-300">
                 ${i + 1}
                 <div class="absolute -top-1.5 -right-1.5 ${i in [0, 1, 2] ? 'bg-slate-900 p-0.5 border border-slate-700' : ''} rounded-full  text-white">
                   ${rowStyle.svg}
@@ -194,23 +194,23 @@ async function addGameToList(game: UserGames[0]) {
     const p = document.createElement('p')
     p.textContent = game.game_title
     img.src = `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.game_icon_hash}.jpg`
-    p.className = ('text-[14px] font-semibold group-hover:text-slate-400 text-left')
+    p.className = ('text-[14px] font-semibold group-hover:text-slate-300 text-left')
     img.className = ('size-9 rounded-full')
-    button.className = (`w-full flex items-center gap-x-2 text-white group hover:bg-slate-800 py-2 px-2 rounded-[12px]`)
+    button.className = (`w-full flex items-center gap-x-2 text-white group hover:bg-slate-600/25 py-2 px-2 rounded-[12px]`)
     button.appendChild(img)
     button.appendChild(p)
     gamesListContainer!.appendChild(button)
 
     button.addEventListener('click', async () => {
         console.log(button.textContent, selectedGame.textContent, button === selectedGame)
-        selectedGame.classList.remove('bg-slate-800', '!text-blue-400', 'border', 'border-slate-700')
+        selectedGame.classList.remove('bg-slate-700/25', '!text-blue-400', 'border', 'border-slate-700')
         selectedGame = button
-        selectedGame.classList.add('bg-slate-800', '!text-blue-400', 'border', 'border-slate-700')
+        selectedGame.classList.add('bg-slate-700/25', '!text-blue-400', 'border', 'border-slate-700')
         await gameClickHandler(game)
     })
 
     const gamesTitle = document.getElementById('gameTitle')
-    gamesTitle!.textContent = `МОИ ИГРЫ (${gamesListContainer!.childElementCount})`
+    gamesTitle!.children[0].children[1].textContent = `МОИ ИГРЫ (${gamesListContainer!.childElementCount})`
 }
 
 
