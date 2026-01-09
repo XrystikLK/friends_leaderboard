@@ -33,24 +33,9 @@ class Game(models.Model):
     appid = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     icon_url = models.URLField(blank=True, null=True)
-    genre = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name
-
-class Achievement(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='achievements')
-    apiname = models.CharField(max_length=255)
-    display_name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    icon_url = models.URLField()
-    hidden = models.BooleanField(default=False)
-
-    class Meta:
-        unique_together = ('game', 'apiname')
-
-    def __str__(self):
-        return f"{self.game.name} - {self.display_name}"
 
 
 class UserGameStats(models.Model):
@@ -63,15 +48,3 @@ class UserGameStats(models.Model):
 
     def __str__(self):
         return f"{self.user.personaname} - {self.game.name}: {self.playtime_forever} min"
-
-
-class UserAchievement(models.Model):
-    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='achievements')
-    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE, related_name='unlocked_by')
-    unlock_time = models.DateTimeField()
-
-    class Meta:
-        unique_together = ('user', 'achievement')
-
-    def __str__(self):
-        return f"{self.user.personaname} unlocked '{self.achievement.display_name}'"
