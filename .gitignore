@@ -1,0 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Local database
+db.sqlite3
+
+# Environment variables
+.env
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE specific files
+.idea/
+.vscode/
+.spyproject/
+
+# Log files
+*.log
+
+# Frontend dependencies and build artifacts
+node_modules/
+package-lock.json
+dist/
