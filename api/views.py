@@ -5,19 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 import api.api as API
-from main.models import UserGameStats, Users, Game
-
-
-@api_view(['GET'])
-def getData(request):
-    return Response({'data': {'i': 25, 'p': 25}})
-
-
-@api_view(['GET'])
-def getMoreData(request):
-    print(request.session.get('steamid'))
-    return Response({'data': {'i': 80, 'p': 80}, 'user': '1'})
-
+from main.models import UserGameStats, Users
 
 @api_view(['GET'])
 def get_game_leaderboard(request, appid: int):

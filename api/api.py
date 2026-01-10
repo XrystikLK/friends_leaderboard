@@ -4,7 +4,6 @@ import requests
 import os
 import re
 from dotenv import load_dotenv
-from pprint import pprint
 from typing import TypedDict, List, NotRequired
 
 
@@ -48,7 +47,6 @@ class UserFriends(TypedDict):
 load_dotenv()
 
 API_KEY = os.getenv('STEAM_API_KEY')
-# 76561198825682828
 def get_user_steamid(profile_link: str) -> str:
     steam_pattern = r"steamcommunity\.com/(?:profiles|id)/([a-zA-Z0-9_-]+)"
     user_id = re.search(steam_pattern, profile_link).group(1)

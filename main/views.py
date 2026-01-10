@@ -1,10 +1,4 @@
-import random
-from pprint import pprint
-
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils import timezone
-
-from api.api import get_user_games
 from . import forms
 from api import api
 from .models import Users, Friendship, Game, UserGameStats
