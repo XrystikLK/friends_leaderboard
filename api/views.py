@@ -17,10 +17,8 @@ def get_game_leaderboard(request, appid: int):
 
     existing_stats = UserGameStats.objects.filter(user_id__in=friend_ids, game_id=appid).select_related('user')
     existing_stats_map = {stat.user_id: stat for stat in existing_stats}
-    print(f"Найдено {len(existing_stats_map)} записей о прохождении игры друзьями в бд")
 
     missing_friend_ids = [fid for fid in friend_ids if fid not in existing_stats_map]
-    print(f"Не хватает данных для {len(missing_friend_ids)} друзей. Запрашиваем из API")
 
     stats_to_create = []
     newly_fetched_data = []
@@ -55,12 +53,10 @@ def get_game_leaderboard(request, appid: int):
             })
 
         except Exception as e:
-            print(f"Ошибка при обработке друга {friend_id} из API: {e}")
             hidden_game_profiles += 1
 
     if stats_to_create:
         UserGameStats.objects.bulk_create(stats_to_create)
-        print(f"Сохранено {len(stats_to_create)} новых записей в БД.")
 
     game_leaderboard = []
 

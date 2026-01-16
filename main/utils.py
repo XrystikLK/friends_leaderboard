@@ -17,12 +17,10 @@ def record_user_friends(steamid: str, current_user: Users):
     try:
         user_friends_data = api.get_user_friends(steamid)
         if not user_friends_data:
-            print(f"У пользователя {current_user.personaname} нет друзей или профиль закрыт.")
             current_user.friends_last_updated = timezone.now()
             current_user.save(update_fields=['friends_last_updated'])
             return
     except Exception as e:
-        print(f"Не удалось получить список друзей для {steamid} {e}")
         return
 
     friend_steamids = [friend_data['steamid'] for friend_data in user_friends_data]
@@ -34,9 +32,7 @@ def record_user_friends(steamid: str, current_user: Users):
         try:
             summaries_chunk = api.get_user_summaries(chunk)
             all_friends_summaries.extend(summaries_chunk)
-            print(f"Запрошено {len(summaries_chunk)} профилей друзей")
         except Exception as e:
-            print(f"Ошибка при получении профилей для чанка {i//chunk_size + 1} {e}")
             continue
 
     existing_users_map = {user.steamid: user for user in Users.objects.filter(steamid__in=friend_steamids)}
@@ -60,10 +56,8 @@ def record_user_friends(steamid: str, current_user: Users):
 
     if users_to_create:
         Users.objects.bulk_create(users_to_create)
-        print(f"Создано {len(users_to_create)} новых пользователей-друзей.")
     if users_to_update:
         Users.objects.bulk_update(users_to_update, ['personaname', 'avatar_url'])
-        print(f"Обновлено {len(users_to_update)} пользователей-друзей")
 
     Friendship.objects.filter(from_user=current_user).delete()
     friend_objects = Users.objects.filter(steamid__in=friend_steamids)
@@ -71,29 +65,22 @@ def record_user_friends(steamid: str, current_user: Users):
     new_friendships = [Friendship(from_user=current_user, to_user=friend_obj) for friend_obj in friend_objects]
     if new_friendships:
         Friendship.objects.bulk_create(new_friendships)
-        print(f"Создано {len(new_friendships)} связей дружбы для {current_user.personaname}")
 
     current_user.friends_last_updated = timezone.now()
     current_user.save(update_fields=['friends_last_updated'])
-    print(f"Обновление друзей для {current_user.personaname} завершено")
 
 
 def record_user_games_info(steamid: str, current_user):
-    try:
-        games_data = api.get_user_games(steamid, include_free_games=True)
-        if 'games' in games_data:
-            for game_info in games_data['games']:
-                game, created = Game.objects.update_or_create(
-                    appid=game_info['appid'],
-                    defaults={'name': game_info.get('name', 'Unknown'), 'icon_url': game_info.get('img_icon_url', ''),}
-                )
-                if created:
-                    print(f"Добавлена новая игра в базу: {game_info.get('name')}")
+    games_data = api.get_user_games(steamid, include_free_games=True)
+    if 'games' in games_data:
+        for game_info in games_data['games']:
+            game, created = Game.objects.update_or_create(
+                appid=game_info['appid'],
+                defaults={'name': game_info.get('name', 'Unknown'), 'icon_url': game_info.get('img_icon_url', ''),}
+            )
 
-                UserGameStats.objects.update_or_create(
-                    user=current_user,
-                    game=game,
-                    defaults={'playtime_forever': int(game_info.get('playtime_forever', 0)/60)}
-                )
-    except Exception as e:
-        print(f"Ошибка при получении или сохранении игр основного пользователя {e}")
+            UserGameStats.objects.update_or_create(
+                user=current_user,
+                game=game,
+                defaults={'playtime_forever': int(game_info.get('playtime_forever', 0)/60)}
+            )

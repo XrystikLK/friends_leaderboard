@@ -1,10 +1,3 @@
-// type GameLeaderboard = {
-//     user_name: string,
-//     game_data: {
-//         game_id: number,
-//         playtime_forever: number
-//     }
-// }[]
 
 type GameLeaderboard = {
     game_info: {
@@ -23,7 +16,6 @@ type GameLeaderboard = {
         }
     }[]
 }
-// string[]leaderboard data summaries
 type UserGames = {
     appid: number,
     game_title: string,
@@ -134,17 +126,6 @@ async function renderLeaderboard(leaderboard: GameLeaderboard['leaderboard']) {
         `
         table!.insertAdjacentHTML('beforeend', tableRow)
     }
-
-
-    // $0.insertAdjacentHTML('beforeend', newRow);
-    // leaderboard
-}
-
-async function addFirstGame() {
-
-
-    await addGameToList(gameLeaderboard.game_info)
-    await renderLeaderboard(gameLeaderboard.leaderboard)
 }
 
 async function gameListArea() {
@@ -174,11 +155,6 @@ async function gameListArea() {
               </div>
             </div>
         `
-        // gameBtn.textContent = game.game_title
-        // gameBtn.className = 'group relative flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 hover:border-blue-500/50 p-4 rounded-2xl transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden'
-        // image.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/header.jpg`
-        // image.classList.add('size-14', 'rounded-[12px]', 'object-cover')
-        // gameBtn.appendChild(image)
         gameBtn.onclick = async () => {
             await addGameToList(game)
             gameBtn.remove()
@@ -289,7 +265,6 @@ async function main() {
     addGameToList(random_game)
     selectedGame = gamesListContainer!.firstElementChild as HTMLButtonElement
     selectedGame.click()
-    // addFirstGame()
 }
 
 const gamesListContainer = document.getElementById('gameContent')

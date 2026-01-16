@@ -19,7 +19,6 @@ def index(request):
                 return redirect('user_profile', steamid=steamid)
 
             except Exception as e:
-                print(f"Произошла ошибка: {e}")
                 form.add_error(None, "Не удалось найти пользователя по этой ссылке. Убедитесь, что ссылка верна.")
 
     else:
@@ -39,12 +38,10 @@ def user_profile(request, steamid):
     try:
         user_summary_data = api.get_user_summaries([steamid])[0]
     except Exception as e:
-        print(f"Ошибка при получении пользователя из Steam API: {e}")
         user_summary_data = None
 
     context = {
         'user': user,
         'user_summary': user_summary_data,
-        # 'friends': friends,
     }
     return render(request, 'user_profile.html', context)
