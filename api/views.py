@@ -1,4 +1,4 @@
-import random
+from concurrent.futures import ThreadPoolExecutor
 
 from django.forms import model_to_dict
 from rest_framework.response import Response
@@ -27,19 +27,25 @@ def get_game_leaderboard(request, appid: int):
 
     missing_friends_map = {friend.steamid: friend for friend in friends if friend.steamid in missing_friend_ids}
 
-    for friend_id in missing_friend_ids:
-        friend_obj = missing_friends_map[friend_id]
+    def fetch_stat_for_friend(friend_id):
         try:
             game_info = API.get_user_games(friend_id, games_id=[appid], include_free_games=True)
             if not game_info:
-                hidden_game_profiles += 1
-                continue
+                return (friend_id, "hidden", None)
             if game_info.get('game_count', 0) < 1:
-                without_game_profiles += 1
-                continue
+                return (friend_id, "no_game", None)
 
             playtime = int(game_info['games'][0].get('playtime_forever', 0) / 60)
+            return (friend_id, "success", playtime)
+        except Exception:
+            return (friend_id, "hidden", None)
 
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        results = executor.map(fetch_stat_for_friend, missing_friend_ids)
+
+    for friend_id, status, playtime in results:
+        if status == "success":
+            friend_obj = missing_friends_map[friend_id]
             stats_to_create.append(UserGameStats(
                 user=friend_obj,
                 game=current_user_game.game,
@@ -51,9 +57,10 @@ def get_game_leaderboard(request, appid: int):
                 "user_steamid": friend_obj.steamid,
                 "game_data": {"playtime_forever": playtime}
             })
-
-        except Exception as e:
+        elif status == "hidden":
             hidden_game_profiles += 1
+        elif status == "no_game":
+            without_game_profiles += 1
 
     if stats_to_create:
         UserGameStats.objects.bulk_create(stats_to_create)
